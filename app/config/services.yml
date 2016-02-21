@@ -1,0 +1,25 @@
+services:
+    # Configure services for Guzzle and OAuth
+    guzzle.twitter.emitter:
+        class: GuzzleHttp\Event\Emitter
+        calls:
+            - [attach, ['@guzzle.twitter.oauthplugin']]
+
+    guzzle.twitter.client:
+        class: GuzzleHttp\Client
+        arguments:
+            - {base_url: [%twitter.base_url%, {version: %twitter.version%}], defaults: {auth: 'oauth'}, emitter: '@guzzle.twitter.emitter'}
+
+    guzzle.twitter.oauthplugin:
+        class: GuzzleHttp\Subscriber\Oauth\Oauth1
+        arguments: [%twitter.config%]
+
+    # Concrete TweetRepository implementation based on guzzle
+    app.twitter.guzzle.repository:
+        class: AppBundle\Repository\GuzzleTweetRepository
+        arguments: ["@guzzle.twitter.client"]
+
+    # Inject repository class into TweetService.
+    domain.twitter.service:
+        class: CoreDomain\TweetService
+        arguments: ["@app.twitter.guzzle.repository"]
