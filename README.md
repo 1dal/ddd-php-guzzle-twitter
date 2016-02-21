@@ -62,9 +62,19 @@ This is responsible to *talk* with external resources, like Twitter. For this ex
 `AppBundle\Repository\GuzzleTweetRepository.php` class, which implements the `CoreDomain\TweetRepository` interface, using the 
 Guzzle library.
 
+
 ## Putting all together (dependency injection)
+ 
+We can summarize the steps done by the application as:
+
+- A request arrives to the controller (application layer), a reference to the `TweetService` service is
+obtained. 
+- This service has also a reference to a concrete `TweetRepository` implementation, which is used by the service to 
+retrieve the `Tweets` and return to the controller.
+- The controller adapts the data to the desired response format.
 
 
+We have glued the application, domain and infrastructure layer using the `service.yml` file.
 
 
 ## Resources
